@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
-import { createStore, applyMiddleware } from 'redux';
+import Redux from 'redux';
 import ReduxThunk from 'redux-thunk';
 
-import { connect, Provider } from 'react-redux';
+import ReactRedux from 'react-redux';
 
 import './index.css';
 
@@ -29,7 +29,7 @@ const mapDispatchToProps = (dispatch) => ({
   loadData: () => dispatch(loadData())
 });
 
-const AppWrapper = connect(mapStateToProps, mapDispatchToProps)(App);
+const AppWrapper = ReactRedux.connect(mapStateToProps, mapDispatchToProps)(App);
 
 //-----------------------------------------------------------------------------------------------
 const Schedule = ({ data }) => (
@@ -88,14 +88,14 @@ const reducer = (state = initialState(), action) => {
   }
 };
 
-const store = () => createStore(reducer, applyMiddleware(ReduxThunk));
+const store = () => Redux.createStore(reducer, Redux.applyMiddleware(ReduxThunk));
 
 
 //-----------------------------------------------------------------------------------------------
 ReactDOM.render(
-  <Provider store={store()}>
+  <ReactRedux.Provider store={store()}>
     <AppWrapper />
-  </Provider>, 
+  </ReactRedux.Provider>, 
   document.getElementById('app')
 );
 

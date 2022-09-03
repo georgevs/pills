@@ -11,14 +11,23 @@ import replace from '@rollup/plugin-replace';
 // import { terser } from 'rollup-plugin-terser';
 
 export default {
-  external: ['react', 'react-dom'],
+  external: [
+    'react', 
+    'react-dom',
+    'redux',
+    'redux-thunk',
+    'react-redux'
+  ],
   input: './src/app/index.tsx',
   output: {
     file: './build/app/app.js',
     format: 'iife',
     globals: {
       'react': 'React',
-      'react-dom': 'ReactDOM'
+      'react-dom': 'ReactDOM',
+      'redux': 'Redux',
+      'redux-thunk': 'ReduxThunk',
+      'react-redux': 'ReactRedux'
     }
   },
   plugins: [

@@ -9,6 +9,9 @@ const resourcesToPrecache = [
   'index.html',
   'https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/redux/4.2.0/redux.min.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/redux-thunk/2.4.1/redux-thunk.min.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/react-redux/8.0.2/react-redux.min.js'
 ];
 
 self.addEventListener('install', (event: ExtendableEvent) => {

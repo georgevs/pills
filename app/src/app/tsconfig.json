@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "jsx": "react",
+    "lib": ["dom", "es2021"],
+    "module": "es6",
+    "moduleResolution": "node",
+    "outDir": "../../build",
+    "target": "es6"
+  }
+}

@@ -18,7 +18,7 @@ export default {
     'redux-thunk',
     'react-redux'
   ],
-  input: './src/app/index.tsx',
+  input: './src/app/index.ts',
   output: {
     file: './build/app/app.js',
     format: 'iife',

@@ -31,4 +31,4 @@ npm install
 npm run build
 npm run deploy
 ```
-Open at http://spamfro.github.io/pills/
+Open at https://spamfro.github.io/pills/

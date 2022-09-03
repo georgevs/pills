@@ -1,7 +1,5 @@
 #!/bin/bash
 
-ln -fsv ../csstype ./node_modules/@types/csstype
-
 mkdir -p ./dist ./build/app
 
 pushd ./src/app

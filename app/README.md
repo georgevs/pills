@@ -6,9 +6,14 @@ npm install
 ./scripts/test-certs-gen-root.sh
 ./scripts/test-certs-gen.sh
 ```
-## Link live certificates
+## Link live certificates (option #1)
 ```
 ln -svfT ~/ws-webroot/secret/certs ./certs
+```
+## Decrypt live certificates (option #2)
+```
+openssl enc -aes-128-cbc -pbkdf2 -salt -d -in ~/ws-archive/certs.tar.gz.bin | tar xzv -
+-directory ./
 ```
 ## Build and run on localhost
 ```

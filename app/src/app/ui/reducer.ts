@@ -9,7 +9,7 @@ const reducer = (state = initialState(), action) => {
   switch (action.type) {
     case 'LOADING': return { ...state, error: null, isLoading: true, data: null };
     case 'LOADED': return { ...state, error: null, isLoading: false, data: action.payload.data };
-    case 'LOAD_ERROR': return { ...state, error: action.payload.error, isLoading: false, data: null };
+    case 'LOADED_ERROR': return { ...state, error: action.payload.error, isLoading: false, data: null };
     default: return state;
   }
 };

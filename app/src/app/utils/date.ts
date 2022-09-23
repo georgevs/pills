@@ -1,4 +1,4 @@
-export const isInvalidDate = (d: Date): boolean => d.toString() === new Date(undefined).toString();
+export const isInvalidDate = (d: Date): boolean => d.toString() === new Date('').toString();
 
 export const date = (s: string): Date => {
   const r = new Date(s);

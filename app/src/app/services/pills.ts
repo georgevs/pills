@@ -1,5 +1,13 @@
 import { date } from '../utils/date';
 
+// const fetchData = () => (
+//   fetch('https://spamfro.xyz/api/data')
+//     .then(resp => { 
+//       if (!resp.ok) { throw Error(resp.statusText) }
+//       return resp.json();
+//     })
+// );
+
 export interface PillsConfig {
   baseUrl: URL;
 }

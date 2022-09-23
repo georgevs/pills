@@ -5,3 +5,6 @@ export const date = (s: string): Date => {
   if (isInvalidDate(r)) { throw Error('Invalid date') }
   return r;
 };
+
+export const addDays = (d: Date, n: number): Date => new Date(d.getTime() + n * 24 * 60 * 60 * 1000);
+export const earlierDate = (l: Date, r: Date): Date => l < r ? l : r;

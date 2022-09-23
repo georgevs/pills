@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import Schedule from './schedule';
 import ErrorBanner from './error-banner';
 
-const App = ({ data = null, isLoading = false, error = null, loadData }) => {
+const App = ({ data = null, isLoading = false, error = null, loadData }: { data: any, isLoading: boolean, error: Error | null, loadData: Function }) => {
 
   useEffect(() => { loadData() }, []);
 

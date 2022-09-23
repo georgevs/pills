@@ -12,12 +12,38 @@ export interface PillsConfig {
   baseUrl: URL;
 }
 
-export const pills = (config: PillsConfig) => new Pills(config);
+export interface Drug {
+  id: number;
+  description: string;
+  doses: number;
+}
+export interface Prescription {
+  id: number;
+  issued: Date;
+  started?: Date;
+  completed?: Date;
+}
 
-class Pills {
+export interface Track {
+  id: number;
+  pid: number;
+  did: number;
+  dose: number;
+  slot: Slot;
+  span?: number;
+  times?: number;
+  filter?: Filter;
+}
+
+export interface HistoryLog {
+  timestamp: Date;
+  tid: number;
+}
+
+export class Pills {
   constructor(config: PillsConfig) { }
 
-  drugs() {
+  drugs(): Promise<Drug[]> {
     return Promise.resolve([
       { "id": 1, "description": "Xymebac 200", "doses": 14 },
       { "id": 2, "description": "Lymex", "doses": 10 },
@@ -26,14 +52,14 @@ class Pills {
     ]);
   }
 
-  prescriptions() {
+  prescriptions(): Promise<Prescription[]> {
     return Promise.resolve([
       { "id": 1, "issued": date("9/1/2022"), "started": date("9/1/2022"), "completed": date("9/7/2022") },
       { "id": 2, "issued": date("9/1/2022"), "started": date("9/1/2022") }
     ]);
   }
 
-  tracks() {
+  tracks(): Promise<Track[]> {
     return Promise.resolve([
       { "id": 1, "pid": 1, "did": 1, "dose": 1, "slot": slot(800), "span": 7 },
       { "id": 2, "pid": 1, "did": 1, "dose": 1, "slot": slot(2000), "span": 7 },
@@ -44,7 +70,7 @@ class Pills {
     ]);
   }
 
-  history() {
+  history(): Promise<HistoryLog[]> {
     return Promise.resolve([
       { "timestamp": date("9/1/2022 8:00"), "tid": 1 },
       { "timestamp": date("9/1/2022 12:00"), "tid": 3 },
@@ -63,13 +89,13 @@ class Pills {
   }
 }
 
-const slot = (n: number) => new Slot(n);
+const slot = (time: number) => new Slot(time);
 
-class Slot {
-  readonly time?: Number;
-  readonly hour?: Number;
-  readonly minute?: Number;
-  readonly label: String;
+export class Slot {
+  readonly time?: number;
+  readonly hour?: number;
+  readonly minute?: number;
+  readonly label: string;
   
   constructor(time: number) {
     if (-5 <= time && time < 0) {
@@ -89,7 +115,7 @@ class Slot {
 const filter = (descr: string) => new Filter(descr);
 
 type FilterRange = [number, number];
-class Filter {
+export class Filter {
   static weekdays = ['su', 'mo', 'tu', 'we', 'th', 'fr', 'sa'];  // weekdays[Date.getDay()]
   private ranges: FilterRange[];
   constructor(descr: string) {

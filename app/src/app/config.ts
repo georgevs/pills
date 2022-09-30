@@ -1,12 +1,6 @@
-import { PillsConfig } from "./services/pills";
-
-export interface Conifg {
-  pills: PillsConfig;
-}
-
-const config = (): Conifg => ({
+const config = () => ({
   pills: {
-    baseUrl: new URL('https://spamfro.xyz/api/v1/pills/')
+    baseUrl: 'https://spamfro.xyz/api/pills/v1/'
   }
 });
 

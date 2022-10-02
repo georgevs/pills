@@ -20,7 +20,7 @@ export class Pills {
 
   prescriptions() {
     return Promise.resolve([
-      { "id": 1, "issued": "9/1/2022", "started": "9/1/2022", "completed": "9/7/2022" },
+      { "id": 1, "issued": "9/1/2022", "started": "9/1/2022" },
       { "id": 2, "issued": "9/1/2022", "started": "9/1/2022" }
     ]);
   }
@@ -31,8 +31,8 @@ export class Pills {
       { "id": 2, "pid": 1, "did": 1, "dose": 1, "slot": 2000, "span": 7 },
       { "id": 3, "pid": 1, "did": 2, "dose": 1, "slot": -3, "span": 7 },
       { "id": 4, "pid": 1, "did": 3, "dose": 1, "slot": -3, "times": 1, "filter": "3" },
-      { "id": 5, "pid": 2, "did": 4, "dose": 1/4, "slot": -5, "filter": "we-th,sa-mo" },
-      { "id": 6, "pid": 2, "did": 4, "dose": 1/2, "slot": -5, "filter": "tu,fr" }
+      { "id": 5, "pid": 2, "did": 4, "dose": 1/4, "slot": -5, "span": 30, "filter": "we-th,sa-mo" },
+      { "id": 6, "pid": 2, "did": 4, "dose": 1/2, "slot": -5, "span": 30, "filter": "tu,fr" }
     ]);
   }
 

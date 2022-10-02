@@ -1,4 +1,5 @@
-import { dateOf, toDateOnly, addDays } from "./utils/date";
+import { dateOf, toDateOnly, addDays, daysInRange } from "./utils/date";
+import { takeUntil, filter } from "./utils/iter";
 
 export const update = (_model, data) => {
   return modelFrom(data);
@@ -11,8 +12,36 @@ const modelFrom = (data) => {
   const prescriptions = prescriptionsFrom(data.prescriptions);
   const slots = slotsFrom(data.tracks);
   const tracks = tracksFrom({ drugs, prescriptions, slots }, data.tracks);
+  const schedule = null;//scheduleFrom({ tracks }, Array.from(prescriptions.get(1));
 
-  return { drugs, prescriptions, slots, tracks };
+  return { drugs, prescriptions, slots, tracks, schedule };
+};
+
+// export const scheduleFrom = ({ tracks: allTracks }, prescription) => {
+//   const tracks = Array.from<any>(allTracks.values())
+//     .filter(track => prescription.id === track.prescription.id);
+//   // const ppp = tracks.flatMap(track => Array.from(trackDays(track)).map(d => [d, track]))
+//   const ppp = tracks.map(track => track);
+//   return { tracks, ppp };
+// };
+
+export const scheduleForTracks = (traks) => (
+  traks.flatMap(track => Array.from(trackDates(track)).map(date => [date, track]))
+    // .reduce((acc,[date,track])=>{let r=acc.get(date)??[]; acc.set(date,(r.push())}),new Set)
+);
+
+export const trackDates = (track) => {
+  let dates = daysInRange(
+    track.prescription.started, 
+    track.span === undefined ? undefined : addDays(track.prescription.started, track.span)
+  );
+  if (track.filter !== undefined) {
+    dates = filter(d => track.filter.includes(track.prescription.started, d))(dates);
+  }
+  if (track.times !== undefined) {
+    dates = takeUntil((_, i) => i + 1 < track.times)(dates);
+  }
+  return dates;
 };
 
 const drugsFrom = (xs) => (
@@ -41,10 +70,10 @@ const tracksFrom = ({ prescriptions, drugs, slots }, xs) => (
   .reduce((acc, { id, pid, did, slot: sid, filter, ...rest }) => 
     acc.set(id, {
       id, ...rest,
-      pid: prescriptions.get(pid),
-      did: drugs.get(did),
+      prescription: prescriptions.get(pid),
+      drug: drugs.get(did),
       slot: slots.get(sid),
-      filter: filterOf(filter)
+      filter: !filter ? filter : filterOf(filter)
     }), new Map)
 );
 
@@ -75,14 +104,13 @@ export class Slot {
   }
 }
 
-const filterOf = (descr?: string) => new Filter(descr);
+const filterOf = (descr: string) => new Filter(descr);
 
 type FilterRange = [number, number];
 export class Filter {
   static weekdays = ['su', 'mo', 'tu', 'we', 'th', 'fr', 'sa'];  // weekdays[Date.getDay()]
-  private ranges?: FilterRange[];
-  constructor(descr?: string) {
-    if (!descr) { return }
+  private ranges: FilterRange[];
+  constructor(descr: string) {
     const parseDescr = (descr: string): FilterRange[] => descr.split(',').map(x => x.trim())
       .map(x => /^([^-]+)(-(.*))?/.exec(x) || [])
       .map(([, l, h, r]) => parseRange([l, h ? r : l]))
@@ -97,7 +125,6 @@ export class Filter {
   }
 
   includes(startDate: Date, date: Date): boolean {
-    if (!this.ranges) { return true }
     const rangeIncludes = (s, d) => ([l, r]: FilterRange) => l < 0 ? l + 7 <= d.getDay() && d.getDay() <= r + 7 : addDays(s, l - 1) <= d && d < addDays(s, r);
     return this.ranges.some(rangeIncludes(toDateOnly(startDate), date));
   }

@@ -1,6 +1,8 @@
 import { dateOf, toDateOnly, addDays, daysInRange } from "./utils/date";
 import { takeUntil, filter } from "./utils/iter";
 
+export const hello = (name) => `Hello, ${name}.`;
+
 export const update = (_model, data) => {
   return modelFrom(data);
 };

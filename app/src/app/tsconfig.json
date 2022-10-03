@@ -1,16 +1,8 @@
 {
+  "extends": "../../tsconfig",
   "compilerOptions": {
-    "allowJs": true,
-    "checkJs": true,
-    "declaration": true,
-    "esModuleInterop": true,
     "jsx": "react",
     "lib": ["dom", "es2021"],
-    "module": "es6",
-    "moduleResolution": "node",
-    "noImplicitAny": false,
-    "outDir": "../../build",
     "strict": true,
-    "target": "es6"
   }
 }

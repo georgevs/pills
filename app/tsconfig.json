@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "lib": ["es2021"],
+    "module": "es6",
+    "moduleResolution": "node",
+    "noImplicitAny": false,
+    "outDir": "../../build",
+    "target": "es6"
+  }
+}

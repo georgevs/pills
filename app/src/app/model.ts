@@ -1,8 +1,6 @@
 import { dateOf, toDateOnly, addDays, daysInRange } from "./utils/date";
 import { takeUntil, filter } from "./utils/iter";
 
-export const hello = (name) => `Hello, ${name}.`;
-
 export const update = (_model, data) => {
   return modelFrom(data);
 };
@@ -27,8 +25,8 @@ const modelFrom = (data) => {
 //   return { tracks, ppp };
 // };
 
-export const scheduleForTracks = (traks) => (
-  traks.flatMap(track => Array.from(trackDates(track)).map(date => [date, track]))
+export const scheduleForTracks = (tracks) => (
+  tracks.flatMap(track => Array.from(trackDates(track)).map(date => [date, track]))
     // .reduce((acc,[date,track])=>{let r=acc.get(date)??[]; acc.set(date,(r.push())}),new Set)
 );
 
@@ -46,28 +44,27 @@ export const trackDates = (track) => {
   return dates;
 };
 
-const drugsFrom = (xs) => (
+export const drugsFrom = (xs) => (
   (xs || [])
   .reduce((acc, { id, ...rest }) => acc.set(id, { id, ...rest }), new Map)
 );
 
-const prescriptionsFrom = (xs) => (
+export const prescriptionsFrom = (xs) => (
   (xs || [])
   .reduce((acc, { id, issued, started, completed, ...rest }) => 
     acc.set(id, { 
       id, ...rest,
       issued: dateOf(issued), 
-      started: dateOf(started), 
-      completed: dateOf(completed)
+      started: dateOf(started)
     }), new Map)
 );
 
-const slotsFrom = (xs) => (
+export const slotsFrom = (xs) => (
   (xs || [])
   .reduce((acc, { slot: sid }) => acc.set(sid, acc.get(sid) ?? slotOf(sid)), new Map)
 );
 
-const tracksFrom = ({ prescriptions, drugs, slots }, xs) => (
+export const tracksFrom = ({ prescriptions, drugs, slots }, xs) => (
   (xs || [])
   .reduce((acc, { id, pid, did, slot: sid, filter, ...rest }) => 
     acc.set(id, {
@@ -79,7 +76,7 @@ const tracksFrom = ({ prescriptions, drugs, slots }, xs) => (
     }), new Map)
 );
 
-const slotOf = (id: number) => new Slot(id);
+export const slotOf = (id: number) => new Slot(id);
 export class Slot {
   readonly id: number;
   readonly time: number;
@@ -106,7 +103,7 @@ export class Slot {
   }
 }
 
-const filterOf = (descr: string) => new Filter(descr);
+export const filterOf = (descr: string) => new Filter(descr);
 
 type FilterRange = [number, number];
 export class Filter {

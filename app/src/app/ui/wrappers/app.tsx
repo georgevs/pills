@@ -10,7 +10,6 @@ const mapDispatchToProps = (dispatch) => ({
 
 // transform app/model into view/model
 const project = (model) => {
-  console.log('model', model);
   return model;
 };
 

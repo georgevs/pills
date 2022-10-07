@@ -8,10 +8,41 @@ describe('model', () => {
       const drugs = drugsFrom(data.drugs);
       const slots = slotsFrom(data.tracks);
       const tracks = tracksFrom({ prescriptions, drugs, slots }, data.tracks);
-      // console.log(scheduleForTracks(Array.from<any>(tracks.values()).filter(track => track.description.id === 1)));
-      const tracksOfPrescription = (pid) => Array.from<any>(tracks.values()).filter(track => track.prescription.id === pid);
-      // console.dir(tracksOfPrescription(1), { depth: 10 })
-      console.dir(scheduleForTracks(tracksOfPrescription(1)).map(([date, track]) => [date.toDateString(), track.id]), { depth: 10 });
+      const tracksOfPrescription = (pid) => (
+        Array.from<any>(tracks.values())
+          .filter(track => track.prescription.id === pid)
+      );
+
+      // { date -> { slot -> [track] } } -> [[date, [slot, [track]]]]
+      // const flatten = (schedule) => (
+      //   Array.from<any>(schedule.entries())   // -> [[date, { slot -> [track] } ]]
+      //   .map(([date, ts]) => [              // -> [[day, [slot.id, [track.id]]]]
+      //     date.toDateString(), 
+      //     Array.from<any>(ts.entries())
+      //       .map(([slot, tracks]) => [slot.id, tracks.map(track => track.id)])
+      //   ]) 
+      // );
+      // console.dir(flatten(scheduleForTracks(tracksOfPrescription(1))), { depth: 5 })
+
+      const t1 = new Map([
+        [slots.get(800), [tracks.get(1)]],
+        [slots.get(2000), [tracks.get(2)]],
+        [slots.get(-3), [tracks.get(3)]]
+      ]);
+      const t2 = new Map([
+        [slots.get(800), [tracks.get(1)]],
+        [slots.get(2000), [tracks.get(2)]],
+        [slots.get(-3), [tracks.get(3), tracks.get(4)]]
+      ]);
+      expect(scheduleForTracks(tracksOfPrescription(1))).toEqual(new Map([
+        [dateOf('9/1/2022'), t1],
+        [dateOf('9/2/2022'), t1],
+        [dateOf('9/3/2022'), t2],
+        [dateOf('9/4/2022'), t1],
+        [dateOf('9/5/2022'), t1],
+        [dateOf('9/6/2022'), t1],
+        [dateOf('9/7/2022'), t1],
+      ]))
     })
   })
 

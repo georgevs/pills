@@ -1,5 +1,6 @@
 import { dateOf, toDateOnly, addDays, daysInRange } from "./utils/date";
 import { takeUntil, filter } from "./utils/iter";
+import { fold, index, unique } from "./utils/functional";
 
 export const update = (_model, data) => {
   return modelFrom(data);
@@ -12,24 +13,34 @@ const modelFrom = (data) => {
   const prescriptions = prescriptionsFrom(data.prescriptions);
   const slots = slotsFrom(data.tracks);
   const tracks = tracksFrom({ drugs, prescriptions, slots }, data.tracks);
-  const schedule = null;//scheduleFrom({ tracks }, Array.from(prescriptions.get(1));
+  const schedule = scheduleForTracks(Array.from<any>(tracks.values()));
 
   return { drugs, prescriptions, slots, tracks, schedule };
 };
 
-// export const scheduleFrom = ({ tracks: allTracks }, prescription) => {
-//   const tracks = Array.from<any>(allTracks.values())
-//     .filter(track => prescription.id === track.prescription.id);
-//   // const ppp = tracks.flatMap(track => Array.from(trackDays(track)).map(d => [d, track]))
-//   const ppp = tracks.map(track => track);
-//   return { tracks, ppp };
-// };
+// [track] -> { date -> [track] }
+const tracksDatesIndex = (tracks) => {
+  const uniqueDate = unique(date => date.getTime());
+  const trackDatesIndex = (track) => (
+    Array.from(trackDates(track))
+      .map(date => [uniqueDate(date), track])
+  );
+  return fold(tracks.flatMap(trackDatesIndex));
+};
 
+// [track] -> { slot -> [track] }
+const tracksSlotsIndex = (tracks) => {
+  const indexBySlot = index(({ slot }) => slot);
+  return fold(indexBySlot(tracks));
+};
+
+// [track] -> { date -> { slot -> [track] } }
 export const scheduleForTracks = (tracks) => (
-  tracks.flatMap(track => Array.from(trackDates(track)).map(date => [date, track]))
-    // .reduce((acc,[date,track])=>{let r=acc.get(date)??[]; acc.set(date,(r.push())}),new Set)
+  Array.from<any>(tracksDatesIndex(tracks).entries())
+    .reduce((acc, [date, tracks]) => acc.set(date, tracksSlotsIndex(tracks)), new Map)
 );
 
+// track -> [dates]
 export const trackDates = (track) => {
   let dates = daysInRange(
     track.prescription.started, 
@@ -44,11 +55,13 @@ export const trackDates = (track) => {
   return dates;
 };
 
+// [db/drug] -> { id -> drug }
 export const drugsFrom = (xs) => (
   (xs || [])
   .reduce((acc, { id, ...rest }) => acc.set(id, { id, ...rest }), new Map)
 );
 
+// [db/prescription] -> { id -> prescription }
 export const prescriptionsFrom = (xs) => (
   (xs || [])
   .reduce((acc, { id, issued, started, completed, ...rest }) => 
@@ -59,11 +72,13 @@ export const prescriptionsFrom = (xs) => (
     }), new Map)
 );
 
+// [db/track] -> { slot/id -> slot }
 export const slotsFrom = (xs) => (
   (xs || [])
   .reduce((acc, { slot: sid }) => acc.set(sid, acc.get(sid) ?? slotOf(sid)), new Map)
 );
 
+// [prescription], [drug], [slot], [db/track] -> { id -> track }
 export const tracksFrom = ({ prescriptions, drugs, slots }, xs) => (
   (xs || [])
   .reduce((acc, { id, pid, did, slot: sid, filter, ...rest }) => 

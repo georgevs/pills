@@ -7,7 +7,7 @@ describe('model', () => {
       const prescriptions = prescriptionsFrom(data.prescriptions);
       const drugs = drugsFrom(data.drugs);
       const slots = slotsFrom(data.tracks);
-      const tracks = tracksFrom({ prescriptions, drugs, slots }, data.tracks);
+      const tracks = tracksFrom({ prescriptions, drugs, slots })(data.tracks);
       const tracksOfPrescription = (pid) => (
         Array.from<any>(tracks.values())
           .filter(track => track.prescription.id === pid)
@@ -51,7 +51,7 @@ describe('model', () => {
       const prescriptions = prescriptionsFrom(data.prescriptions);
       const drugs = drugsFrom(data.drugs);
       const slots = slotsFrom(data.tracks);
-      const tracks = tracksFrom({ prescriptions, drugs, slots }, data.tracks);
+      const tracks = tracksFrom({ prescriptions, drugs, slots })(data.tracks);
       expect(Array.from(trackDates(tracks.get(1)))).toEqual([
         dateOf('9/1/2022'),
         dateOf('9/2/2022'),
@@ -120,7 +120,7 @@ describe('model', () => {
       const prescriptions = prescriptionsFrom(data.prescriptions);
       const drugs = drugsFrom(data.drugs);
       const slots = slotsFrom(data.tracks);
-      expect(tracksFrom({ prescriptions, drugs, slots }, data.tracks)).toEqual(
+      expect(tracksFrom({ prescriptions, drugs, slots })(data.tracks)).toEqual(
         new Map([
           [1, { id: 1, dose: 1, span: 7, prescription: prescriptions.get(1), drug: drugs.get(1), slot: slotOf(800), filter: undefined }],
           [2, { id: 2, dose: 1, span: 7, prescription: prescriptions.get(1), drug: drugs.get(1), slot: slotOf(2000), filter: undefined }],

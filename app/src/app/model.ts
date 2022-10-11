@@ -1,6 +1,6 @@
 import { dateOf, toDateOnly, addDays, daysInRange } from "./utils/date";
 import { takeUntil, filter } from "./utils/iter";
-import { fold, index, unique } from "./utils/functional";
+import { compose, remap, index, indexBy, map, unique } from "./utils/functional";
 
 export const update = (_model, data) => {
   return modelFrom(data);
@@ -12,35 +12,13 @@ const modelFrom = (data) => {
   const drugs = drugsFrom(data.drugs);
   const prescriptions = prescriptionsFrom(data.prescriptions);
   const slots = slotsFrom(data.tracks);
-  const tracks = tracksFrom({ drugs, prescriptions, slots }, data.tracks);
+  const tracks = tracksFrom({ drugs, prescriptions, slots })(data.tracks);
   const schedule = scheduleForTracks(Array.from<any>(tracks.values()));
 
   return { drugs, prescriptions, slots, tracks, schedule };
 };
 
-// [track] -> { date -> [track] }
-const tracksDatesIndex = (tracks) => {
-  const uniqueDate = unique(date => date.getTime());
-  const trackDatesIndex = (track) => (
-    Array.from(trackDates(track))
-      .map(date => [uniqueDate(date), track])
-  );
-  return fold(tracks.flatMap(trackDatesIndex));
-};
-
-// [track] -> { slot -> [track] }
-const tracksSlotsIndex = (tracks) => {
-  const indexBySlot = index(({ slot }) => slot);
-  return fold(indexBySlot(tracks));
-};
-
-// [track] -> { date -> { slot -> [track] } }
-export const scheduleForTracks = (tracks) => (
-  Array.from<any>(tracksDatesIndex(tracks).entries())
-    .reduce((acc, [date, tracks]) => acc.set(date, tracksSlotsIndex(tracks)), new Map)
-);
-
-// track -> [dates]
+// track -> date...
 export const trackDates = (track) => {
   let dates = daysInRange(
     track.prescription.started, 
@@ -55,41 +33,59 @@ export const trackDates = (track) => {
   return dates;
 };
 
+// [track] -> { s -> [track] }
+const indexBySlot = index(({ slot }) => [slot]);
+
+const uniqueDate = () => unique(date => date.getTime());
+
+// track -> [date]
+const trackUniqueDates = compose(map(uniqueDate()), Array.from, trackDates);
+
+// [track] -> { d -> [track] }
+const indexByDate = index(trackUniqueDates);
+
+// [track] -> { d -> { s -> [track] } }
+export const scheduleForTracks = compose(remap(indexBySlot), indexByDate);
+
+// db/drug -> [id, drug]
+const drugKey = ({ id, ...rest }) => [id, { id, ...rest }];
+
 // [db/drug] -> { id -> drug }
-export const drugsFrom = (xs) => (
-  (xs || [])
-  .reduce((acc, { id, ...rest }) => acc.set(id, { id, ...rest }), new Map)
-);
+export const drugsFrom = indexBy(drugKey);
+
+// db/prescription -> [id, prescription]
+const prescriptionKey = ({ id, issued, started, completed, ...rest }) => [id, { 
+  id, ...rest,
+  issued: dateOf(issued), 
+  started: dateOf(started)
+}];
 
 // [db/prescription] -> { id -> prescription }
-export const prescriptionsFrom = (xs) => (
-  (xs || [])
-  .reduce((acc, { id, issued, started, completed, ...rest }) => 
-    acc.set(id, { 
-      id, ...rest,
-      issued: dateOf(issued), 
-      started: dateOf(started)
-    }), new Map)
-);
+export const prescriptionsFrom = indexBy(prescriptionKey);
+
+// db/track -> [slot/id, slot]
+const slotKey = () => {
+  const m = new Map;
+  const get = (sid) => m.get(sid) ?? m.set(sid, slotOf(sid)).get(sid);
+  return ({ slot: sid }) => [sid, get(sid)];
+};
 
 // [db/track] -> { slot/id -> slot }
-export const slotsFrom = (xs) => (
-  (xs || [])
-  .reduce((acc, { slot: sid }) => acc.set(sid, acc.get(sid) ?? slotOf(sid)), new Map)
+export const slotsFrom = indexBy(slotKey());
+
+// ([prescription], [drug], [slot]) -> db/track -> [id, track]
+const trackKey = ({ prescriptions, drugs, slots }) => (
+  ({ id, pid, did, slot: sid, filter, ...rest }) => [id, {
+    id, ...rest,
+    prescription: prescriptions.get(pid),
+    drug: drugs.get(did),
+    slot: slots.get(sid),
+    filter: !filter ? filter : filterOf(filter)
+  }]
 );
 
-// [prescription], [drug], [slot], [db/track] -> { id -> track }
-export const tracksFrom = ({ prescriptions, drugs, slots }, xs) => (
-  (xs || [])
-  .reduce((acc, { id, pid, did, slot: sid, filter, ...rest }) => 
-    acc.set(id, {
-      id, ...rest,
-      prescription: prescriptions.get(pid),
-      drug: drugs.get(did),
-      slot: slots.get(sid),
-      filter: !filter ? filter : filterOf(filter)
-    }), new Map)
-);
+// ([prescription], [drug], [slot]) -> [db/track] -> { id -> track }
+export const tracksFrom = ({ prescriptions, drugs, slots }) => indexBy(trackKey({ prescriptions, drugs, slots }));
 
 export const slotOf = (id: number) => new Slot(id);
 export class Slot {

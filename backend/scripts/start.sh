@@ -1,3 +1,3 @@
-#!/bin/sh
+#!/bin/bash
 
-node ./out/index
+node ./dist/index

@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
     "allowJs": true,
+    "checkJs": true,
+    "declaration": true,
     "esModuleInterop": true,
-    "module": "commonjs",
-    "outDir": "./out",
-    "target": "es6",
-    "lib": [
-      "es2015"
-    ]
-  },
-  "include": ["./src/**/*"]
+    "lib": ["es2021"],
+    "module": "es6",
+    "moduleResolution": "node",
+    "noImplicitAny": false,
+    "target": "es6"
+  }
 }

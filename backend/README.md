@@ -1,4 +1,4 @@
-# Pills app
+# Pills backend
 
 ## Link live certificates (option #1)
 ```

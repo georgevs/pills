@@ -1,6 +1,5 @@
 export const fetchData = (buildQuery) => (connection) => (details, callback) => {
   const [sql, values] = buildQuery(details);
-  // console.log({ sql, values });
   connection.query(sql, values, callback);
 };
 
@@ -22,7 +21,7 @@ export const buildTableQuery = ({ table, fields: tableFields }) => ({ fields: qu
   return [sql, values];
 };
 
-const view = (keys) => (obj) => Object.fromEntries(Object.entries(obj).filter(([key]) => keys.includes(key)));
+const view = (keys) => (obj = {}) => Object.fromEntries(Object.entries(obj).filter(([key]) => keys.includes(key)));
 
 const lens = (keys) => ({
   view: view(keys)

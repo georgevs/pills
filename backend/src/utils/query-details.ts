@@ -1,8 +1,9 @@
-interface Query {
+interface QueryDetails {
   filter?: Record<string, string>;
   fields?: string[];
   start?: Number;
   count?: Number;
+  params?: Record<string, string>;
 }
 
-export default Query;
+export default QueryDetails;

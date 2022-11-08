@@ -1,6 +1,6 @@
-import type Query from './query';
+import type QueryDetails from './query-details';
 
-class RequestQuery implements Query {
+class RequestQueryDetails implements QueryDetails {
   filter?: Record<string, string>;
   fields?: string[];
   start?: Number;
@@ -9,7 +9,7 @@ class RequestQuery implements Query {
     const parseKey = RegExp.prototype.exec.bind(/^q\.(.+)/);
     const filter = Object.entries(query)
       .map(([key, value]) => [parseKey(key), value])
-      .filter(([key, value]) => !!key && value !== undefined)
+      .filter(([match]) => !!match)
       .map(([[, key], value]) => [key, value]);
     if (filter.length > 0) { this.filter = Object.fromEntries(filter) }  
 
@@ -24,4 +24,4 @@ class RequestQuery implements Query {
   }
 }
 
-export default RequestQuery;
+export default RequestQueryDetails;

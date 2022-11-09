@@ -1,7 +1,6 @@
 import express, { request } from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import RequestQueryDetails from './utils/request-query-details';
 
 const app = (db) => {
   const app = express();
@@ -14,7 +13,7 @@ const app = (db) => {
 
   const sendAll = (res) => (err, results) => {
     res.setHeader('Content-Type', 'application/json');
-    res.status(err ? 500 : results.length == 0 ? 404 : 200);
+    res.status(err ? 500 : 200);
     res.send(JSON.stringify(err || results));
   };
 
@@ -27,29 +26,33 @@ const app = (db) => {
   // See wiki/restful-api.md
   
   // curl 'https://spamfro.xyz:3444/pills/drugs'
-  // curl 'https://spamfro.xyz:3444/pills/drugs?q.id=1'
-  // curl 'https://spamfro.xyz:3444/pills/drugs?q=id,description,doses'
-  // curl 'https://spamfro.xyz:3444/pills/drugs?s=5&c=5'
   app.get('/pills/drugs', (req, res) => {
-    const details = new RequestQueryDetails(req.query);
-    db.fetchDrugs(details, sendAll(res));
+    db.fetchDrugs(sendAll(res));
   });
 
   // curl 'https://spamfro.xyz:3444/pills/drugs/1'
-  // curl 'https://spamfro.xyz:3444/pills/drugs/1?q=id,description,doses'
   app.get('/pills/drugs/:id', (req, res) => {
-    const { id } = req.params;
-    const { fields } = new RequestQueryDetails(req.query);
-    const details = { fields, filter: { id }, count: 1 };
-    db.fetchDrugs(details, sendOne(res));
+    db.fetchDrug(req.params, sendOne(res));
   });
 
   // curl 'https://spamfro.xyz:3444/pills/prescriptions/1/drugs'
-  // curl 'https://spamfro.xyz:3444/pills/prescriptions/1/drugs?q=id,description,doses'
   app.get('/pills/prescriptions/:pid/drugs', (req, res) => {
-    const { pid } = req.params;
-    const details = new RequestQueryDetails(req.query);
-    db.fetchPrescriptionsDrugs({ ...details, params: { pid } }, sendAll(res));
+    db.fetchPrescriptionsDrugs(req.params, sendAll(res));
+  });
+
+  // curl 'https://spamfro.xyz:3444/pills/prescriptions'
+  app.get('/pills/prescriptions', (req, res) => {
+    db.fetchPrescriptions(sendAll(res));
+  });
+
+  // curl 'https://spamfro.xyz:3444/pills/tracks'
+  app.get('/pills/tracks', (req, res) => {
+    db.fetchTracks(sendAll(res));
+  });
+  
+  // curl 'https://spamfro.xyz:3444/pills/history'
+  app.get('/pills/history', (req, res) => {
+    db.fetchHistory(sendAll(res));
   });
   
   return app;

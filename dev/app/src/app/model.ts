@@ -75,12 +75,14 @@ export const slotsFrom = indexBy(slotKey());
 
 // ([prescription], [drug], [slot]) -> db/track -> [id, track]
 const trackKey = ({ prescriptions, drugs, slots }) => (
-  ({ id, pid, did, slot: sid, filter, ...rest }) => [id, {
+  ({ id, pid, did, slot: sid, span, times, filter, ...rest }) => [id, {
     id, ...rest,
     prescription: prescriptions.get(pid),
     drug: drugs.get(did),
     slot: slots.get(sid),
-    filter: !filter ? filter : filterOf(filter)
+    span: !span ? undefined : span,
+    times: !times ? undefined : times,
+    filter: !filter ? undefined : filterOf(filter)
   }]
 );
 

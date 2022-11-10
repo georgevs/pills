@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.31, for Linux (x86_64)
 --
--- Host: 127.0.0.1    Database: pills
+-- Host: 172.18.0.103    Database: pills
 -- ------------------------------------------------------
 -- Server version	8.0.29
 
@@ -14,6 +14,14 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Current Database: `pills`
+--
+
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `pills` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+
+USE `pills`;
 
 --
 -- Table structure for table `drugs`
@@ -93,4 +101,4 @@ CREATE TABLE `tracks` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-11-06  3:03:59
+-- Dump completed on 2022-11-10  9:44:37

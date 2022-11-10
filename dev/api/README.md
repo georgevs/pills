@@ -2,7 +2,7 @@
 
 ## Link live certificates (option #1)
 ```
-ln -svfT ~/ws-private/certs ./certs
+ln -svfT /mnt/ws-dbs/certs ./certs
 ```
 ## Decrypt live certificates (option #2)
 ```

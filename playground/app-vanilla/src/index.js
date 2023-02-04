@@ -5,28 +5,55 @@ window.addEventListener('load', () => { window.app = new App() });
 //----------------------------------------------------------------------------------------
 class App {
   constructor() {
-    this.ui = new Ui('body');
+    this.ui = new Ui(document.body);
   }
 }
 
 //----------------------------------------------------------------------------------------
-class UiElement {
-  constructor(sel, parent) {
-    this.el = sel instanceof HTMLElement ? sel : (parent ?? document).querySelector(sel);
-    this.addEventListener = this.el.addEventListener.bind(this.el);
-    this.dispatchEvent = this.el.dispatchEvent.bind(this.el);
-    this.querySelector = this.el.querySelector.bind(this.el);
-    this.appendChild = this.el.appendChild.bind(this.el);
+class Ui {
+  constructor(el) {
+    this.legend = new LegendList(
+      el.querySelector('.legend') || 
+      el.appendChild(LegendList.createElement({ className: 'legend' }))
+    );
   }
 
-  static createElement(tagName, { sel, parent }) {
-    const el = document.createElement(tagName);
-    if (sel) { el.classList.add(...sel.split(' ')) }
-    if (parent) { parent.appendChild(el) }
+  render({ legend }) {
+    if (legend) { this.legend.render(legend) }
+  }
+}
+
+//----------------------------------------------------------------------------------------
+class LegendList {
+  static createElement({ className }) {
+    const el = document.createElement('ul');
+    el.classList.add(...className.split(' ').filter(Boolean).concat('legend', 'list'));
     return el;
   }
+
+  constructor(el) { this.el = el }
+
+  render({ items }) {
+    this.el.querySelectorAll('.item').forEach(el => el.remove());
+    (items || []).forEach(item => {
+      new LegendItem(this.el.appendChild(LegendItem.createElement()))
+        .render(item)
+    });
+  }
 }
 
-//----------------------------------------------------------------------------------------
-class Ui extends UiElement {
+class LegendItem {
+  static createElement() {
+    const el = document.createElement('li');
+    el.classList.add('item');
+    el.appendChild(document.createElement('span'));
+    return el;
+  }
+
+  constructor(el) { this.el = el }
+
+  render({ color, text }) {
+    if (color) { this.el.style.color = color }
+    if (text) { this.el.childNodes[0].textContent = text }
+  }
 }

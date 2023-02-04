@@ -1,1 +1,23 @@
 /* index.css */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+ul.legend {
+  list-style-type: none;
+  padding-inline-start: 0;
+}
+
+ul.legend li:before {
+  content: '\2588';
+  font-size: smaller;
+  padding: 0 0.2em;
+}
+
+ul.legend li span {
+  color: black;
+}

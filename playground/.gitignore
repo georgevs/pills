@@ -1,0 +1,5 @@
+node_modules
+certs
+secrets
+__*
+package-lock.json

@@ -1,0 +1,45 @@
+<html>
+  <head>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-size: 48px;
+        height: 100%;
+        margin: 0;
+      }
+
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      li::before {
+        content: '';
+        background-color: var(--marker-color);
+        padding-inline: 0.5em;
+        clip-path: ellipse(0.4em 0.2em at center);
+      }
+      li.checked::before {
+        clip-path: polygon(13% 66%, 48% 87%, 86% 28%, 75% 20%, 44% 68%, 21% 54%);
+      }
+    </style>
+    <script>
+      window.addEventListener('load', () => {
+        document.querySelectorAll('li').forEach(li => {
+          li.addEventListener('click', (e) => {
+            e.target.classList.toggle('checked')
+          })
+        })
+      })
+    </script>
+  </head>
+  <body>
+    <ul>
+      <li style="--marker-color: red">item 1</li>
+      <li style="--marker-color: green">item 2</li>
+      <li style="--marker-color: blue">item 3</li>
+    </ul>
+  </body>
+</html>

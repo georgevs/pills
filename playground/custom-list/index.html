@@ -1,0 +1,83 @@
+<html>
+  <head>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-size: 48px;
+        height: 100%;
+        margin: 0;
+      }
+
+      ul.list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      ul.list > li::before {
+        content: '';
+        background-color: var(--marker-color);
+        padding-inline: 0.5em;
+        clip-path: ellipse(0.4em 0.2em at center);
+      }
+      ul.list > li.checked::before {
+        clip-path: polygon(13% 66%, 48% 87%, 86% 28%, 75% 20%, 44% 68%, 21% 54%);
+      }
+    </style>
+    <script>
+      class List {
+        static createElement() {
+          const el = document.createElement('ul');
+          el.classList.add('list');
+          return el;
+        }
+        constructor(el) { this.el = el }
+        render({ markerColor, items }) {
+          if (markerColor) { this.el.style.setProperty('--marker-color', markerColor) }
+          if (items) {
+            this.el.querySelectorAll(':scope > li').forEach(el => { el.remove() });
+            items.forEach(item => {
+              const el = new ListItem(this.el.appendChild(ListItem.createElement()));
+              el.render(item);
+            });
+          }
+        }
+      }
+      class ListItem {
+        static createElement() {
+          return document.createElement('li');
+        }
+        constructor(el) { this.el = el }
+        render({ markerColor, checked, text }) {
+          if (markerColor) { this.el.style.setProperty('--marker-color', markerColor) }
+          if (checked === true) { this.el.classList.add('checked') }
+          if (checked === false) { this.el.classList.remove('checked') }
+          if (text) { this.el.textContent = text.toString() }
+        }
+      }
+
+      window.addEventListener('load', () => {
+        const btn = document.querySelector('.btn-add-list');
+        btn.addEventListener('click', () => {
+          const el = new List(document.body.appendChild(List.createElement()));
+          el.render({
+            markerColor: 'blue',
+            items: [
+              { markerColor: 'red', checked: true, text: 'item A' },
+              { text: 'item B' }
+            ]
+          });
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <ul class="list">
+      <li style="--marker-color: red" class="checked">item 1</li>
+      <li style="--marker-color: green">item 2</li>
+      <li style="--marker-color: blue">item 3</li>
+    </ul>
+    <button class="btn-add-list">Add list</button>
+  </body>
+</html>

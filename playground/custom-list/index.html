@@ -44,6 +44,7 @@
           }
         }
       }
+
       class ListItem {
         static createElement() {
           return document.createElement('li');
@@ -57,9 +58,12 @@
         }
       }
 
-      window.addEventListener('load', () => {
-        const btn = document.querySelector('.btn-add-list');
-        btn.addEventListener('click', () => {
+      class App {
+        constructor() {
+          const btn = document.querySelector('.btn-add-list');
+          btn.addEventListener('click', this.addList.bind(this));
+        }
+        addList() {
           const el = new List(document.body.appendChild(List.createElement()));
           el.render({
             markerColor: 'blue',
@@ -68,8 +72,10 @@
               { text: 'item B' }
             ]
           });
-        });
-      });
+        }
+      }
+
+      window.addEventListener('load', () => { window.app = new App() });
     </script>
   </head>
   <body>
